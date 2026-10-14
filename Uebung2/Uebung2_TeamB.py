@@ -12,6 +12,7 @@ Aufgabe 1
 7. Einsatz von globalen Variablen!! Nicht gut, trägt zur Unübersichtlichkeit bei
 8. Funktion calculate_task_average wird nicht genutzt
 9. Zeile 54 division bei Zero
+10. Zeile 87/89 upcoming_tasks: Datum wird als String formatiert und ein Stringvergleich wird gemacht
 '''
 
 '''

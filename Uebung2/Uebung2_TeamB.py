@@ -112,19 +112,13 @@ def upcoming_tasks(tasks: dict) -> list:
 
 """Entfernt alle erledigten Aufgaben."""
 def cleanup(tasks: dict) -> None:
-    temp = {}
-    for task_id, task in tasks.items():
-        if not task[3]:
-            temp[task_id] = task
-    if len(temp) == len(tasks):
-        return
-    tasks.clear()
-    tasks.update(temp)
-
+    done_ids = [task_id for task_id, t in tasks.items() if t["done"]]
+    for task_id in done_ids:
+        del tasks[task_id]
 
 """Anzahl aller gespeicherten Aufgaben."""
 def get_task_count(tasks: dict) -> int:
-    return sum(1 for _ in tasks) if tasks else 0
+    return len(tasks)
 
 
 
@@ -146,9 +140,7 @@ if __name__ == "__main__":
     print("Offene Aufgaben nach Datum sortiert:")
     for t in upcoming_tasks(my_tasks):
         print(f"  {t['due_date']:%d-%m-%Y} {t['name']}")
-
-    """
     
-    cleanup()
-    print("Gesamtzahl der Aufgaben:", get_task_count())
-    """
+    cleanup(my_tasks)
+    print("Gesamtzahl der Aufgaben:", get_task_count(my_tasks))
+

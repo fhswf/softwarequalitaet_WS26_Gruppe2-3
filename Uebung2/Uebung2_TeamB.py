@@ -81,16 +81,18 @@ def mark_done(tasks: dict, task_name: str) -> bool:
 """Gibt alle Aufgaben auf der Konsole aus."""
 def show_tasks(tasks: dict) -> None:
     for task_id, task in tasks.items():
-        print(
-            f"{task_id}: {task[0]} ({task[2]}) - bis {task[1]} - {'Erledigt' if task[3] else 'Offen'}")
+        status = "Erledigt" if task["done"] else "Offen"
+        print(f"{task_id}: {task['name']} ({task['priority']}) "
+              f"- bis {task['due_date']:%d-%m-%Y} - {status}")
 
 
 """Schaltet den Status einer zufälligen Aufgabe um."""
 def process_tasks(tasks: dict) -> bool:
-    rand_id = random.choice(list(tasks.keys()))
-    tasks[rand_id][3] = not tasks[rand_id][3]
-    return False
-    # TODO
+    if not tasks:
+        return False
+    task = tasks[random.choice(list(tasks))]
+    task["done"] = not task["done"]
+    return True
 
 
 """Durchschnitt der Task-IDs."""
@@ -140,12 +142,12 @@ if __name__ == "__main__":
 
     mark_done(my_tasks, "Einkaufen gehen")
 
+    process_tasks(my_tasks)
+    show_tasks(my_tasks)
+
     print(my_tasks)
 
     """
-    
-    process_tasks()
-    show_tasks()
     print("Offene Aufgaben nach Datum sortiert:", upcoming_tasks())
     cleanup()
     print("Gesamtzahl der Aufgaben:", get_task_count())

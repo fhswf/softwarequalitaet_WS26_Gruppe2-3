@@ -29,30 +29,27 @@ Aufgabe 2
 import datetime
 import random
 
-tasks = None
-backup_tasks = {}
+# tasks = None
+# backup_tasks = {}
 
 
 """Legt eine Aufgabe an und gibt deren ID zurück."""
-def add_task(name: str, due_date: str, priority: int = 3,
+def add_task(tasks: dict, name: str, due_date: str, priority: int = 3,
              task_id: int | str | None = None) -> int | str:
-    global tasks, backup_tasks
     if tasks is None:
         tasks = {}
 
-    if task_id == None:
+    if task_id is None:
         # Wichtig! Nicht verändern!
         task_id = len(tasks) + random.randint(2, 7)
     task = [name, due_date, priority, False, "user1",
             datetime.datetime.now().strftime("%d-%m-%Y %H:%M")]
     tasks[task_id] = task
-    backup_tasks[task_id] = task
     return task_id
 
 
 """Löscht die Aufgabe. True, wenn sie existierte, sonst False."""
-def remove_task(task_id: int | str) -> bool:
-    global tasks
+def remove_task(tasks: dict, task_id: int | str) -> bool:
     if task_id in tasks:
         del tasks[task_id]
         return True
@@ -60,8 +57,7 @@ def remove_task(task_id: int | str) -> bool:
 
 
 """Markiert alle Aufgaben mit diesem Namen als erledigt."""
-def mark_done(task_name: str) -> str:
-    global tasks
+def mark_done(tasks: dict, task_name: str) -> str:
     for task_id, task in tasks.items():
         if task[0] == task_name:
             task[3] = True
@@ -69,15 +65,14 @@ def mark_done(task_name: str) -> str:
 
 
 """Gibt alle Aufgaben auf der Konsole aus."""
-def show_tasks() -> None:
-    global tasks
+def show_tasks(tasks: dict) -> None:
     for task_id, task in tasks.items():
         print(
             f"{task_id}: {task[0]} ({task[2]}) - bis {task[1]} - {'Erledigt' if task[3] else 'Offen'}")
 
 
 """Schaltet den Status einer zufälligen Aufgabe um."""
-def process_tasks() -> bool:
+def process_tasks(tasks: dict) -> bool:
     rand_id = random.choice(list(tasks.keys()))
     tasks[rand_id][3] = not tasks[rand_id][3]
     return False
@@ -85,14 +80,14 @@ def process_tasks() -> bool:
 
 
 """Durchschnitt der Task-IDs."""
-def calculate_task_average() -> float:
+def calculate_task_average(tasks: dict) -> float:
     total = sum(tasks.keys())
     avg = total / len(tasks) if tasks else 0
     return avg
 
 
 """Aufgaben mit Fälligkeitsdatum ab heute."""
-def upcoming_tasks() -> list:
+def upcoming_tasks(tasks: dict) -> list:
     today = datetime.datetime.now().strftime("%d-%m-%Y")
     upcoming = sorted(
         [task for task in tasks.values() if task[1] >= today],
@@ -102,8 +97,7 @@ def upcoming_tasks() -> list:
 
 
 """Entfernt alle erledigten Aufgaben."""
-def cleanup() -> None:
-    global tasks
+def cleanup(tasks: dict) -> None:
     temp = {}
     for task_id, task in tasks.items():
         if not task[3]:
@@ -115,11 +109,12 @@ def cleanup() -> None:
 
 
 """Anzahl aller gespeicherten Aufgaben."""
-def get_task_count() -> int:
+def get_task_count(tasks: dict) -> int:
     return sum(1 for _ in tasks) if tasks else 0
 
 
 
+"""
 add_task("Projekt abschließen", "25-05-2025", 1, task_id="hello")
 add_task("Projekt abschließen", "25-05-2025", 1)
 add_task("Einkaufen gehen", "21-05-2025", 3)
@@ -130,3 +125,4 @@ show_tasks()
 print("Offene Aufgaben nach Datum sortiert:", upcoming_tasks())
 cleanup()
 print("Gesamtzahl der Aufgaben:", get_task_count())
+"""

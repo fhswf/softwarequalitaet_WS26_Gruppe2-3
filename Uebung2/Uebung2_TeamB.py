@@ -68,12 +68,14 @@ def remove_task(tasks: dict, task_id: int | str) -> bool:
     return False
 
 
-"""Markiert alle Aufgaben mit diesem Namen als erledigt."""
-def mark_done(tasks: dict, task_name: str) -> str:
-    for task_id, task in tasks.items():
-        if task[0] == task_name:
-            task[3] = True
-    return "Erledigt"
+"""Markiert alle Aufgaben mit diesem Namen als erledigt. True sobald ein Ergebnis gefunden"""
+def mark_done(tasks: dict, task_name: str) -> bool:
+    found = False
+    for task in tasks.values():
+        if task["name"] == task_name:
+            task["done"] = True
+            found = True
+    return found
 
 
 """Gibt alle Aufgaben auf der Konsole aus."""
@@ -136,10 +138,12 @@ if __name__ == "__main__":
     add_task(my_tasks, "Einkaufen gehen", in_days(1), 3)
     add_task(my_tasks, "Dokumentation schreiben", in_days(9), 2)
 
+    mark_done(my_tasks, "Einkaufen gehen")
+
     print(my_tasks)
 
     """
-    mark_done("Einkaufen gehen")
+    
     process_tasks()
     show_tasks()
     print("Offene Aufgaben nach Datum sortiert:", upcoming_tasks())

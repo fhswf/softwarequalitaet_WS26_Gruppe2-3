@@ -34,17 +34,29 @@ import random
 
 
 """Legt eine Aufgabe an und gibt deren ID zurück."""
-def add_task(tasks: dict, name: str, due_date: str, priority: int = 3,
+def add_task(tasks: dict, name: str, due_date: datetime.date, priority: int = 3,
              task_id: int | str | None = None) -> int | str:
-    if tasks is None:
-        tasks = {}
-
+    
     if task_id is None:
-        # Wichtig! Nicht verändern!
         task_id = len(tasks) + random.randint(2, 7)
-    task = [name, due_date, priority, False, "user1",
-            datetime.datetime.now().strftime("%d-%m-%Y %H:%M")]
-    tasks[task_id] = task
+        # Kollisionen vermeiden, ohne die obige Zeile anzufassen
+        while task_id in tasks:
+            task_id += 1
+    elif task_id in tasks:
+        """
+        Ohne task_id wird eine freie ID erzeugt. Eine bereits vergebene,
+        explizit übergebene ID führt zu einem ValueError.
+        """
+        raise ValueError(f"ID {task_id} ist bereits vergeben")
+ 
+    tasks[task_id] = {
+        "name": name,
+        "due_date": due_date,
+        "priority": priority,
+        "done": False,
+        "owner": "user1",
+        "created": datetime.datetime.now(),
+    }
     return task_id
 
 
@@ -114,15 +126,23 @@ def get_task_count(tasks: dict) -> int:
 
 
 
-"""
-add_task("Projekt abschließen", "25-05-2025", 1, task_id="hello")
-add_task("Projekt abschließen", "25-05-2025", 1)
-add_task("Einkaufen gehen", "21-05-2025", 3)
-add_task("Dokumentation schreiben", "30-05-2025", 2)
-mark_done("Einkaufen gehen")
-process_tasks()
-show_tasks()
-print("Offene Aufgaben nach Datum sortiert:", upcoming_tasks())
-cleanup()
-print("Gesamtzahl der Aufgaben:", get_task_count())
-"""
+if __name__ == "__main__":
+    my_tasks: dict = {}
+    today = datetime.date.today()
+    in_days = lambda n: today + datetime.timedelta(days=n)
+
+    add_task(my_tasks, "Projekt abschließen", in_days(4), 1, task_id="hello")
+    add_task(my_tasks, "Projekt abschließen", in_days(4), 1)
+    add_task(my_tasks, "Einkaufen gehen", in_days(1), 3)
+    add_task(my_tasks, "Dokumentation schreiben", in_days(9), 2)
+
+    print(my_tasks)
+
+    """
+    mark_done("Einkaufen gehen")
+    process_tasks()
+    show_tasks()
+    print("Offene Aufgaben nach Datum sortiert:", upcoming_tasks())
+    cleanup()
+    print("Gesamtzahl der Aufgaben:", get_task_count())
+    """

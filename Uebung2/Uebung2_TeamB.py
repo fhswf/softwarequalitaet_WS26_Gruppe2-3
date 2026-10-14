@@ -104,12 +104,10 @@ def calculate_task_average(tasks: dict) -> float:
 
 """Aufgaben mit Fälligkeitsdatum ab heute."""
 def upcoming_tasks(tasks: dict) -> list:
-    today = datetime.datetime.now().strftime("%d-%m-%Y")
-    upcoming = sorted(
-        [task for task in tasks.values() if task[1] >= today],
-        key=lambda x: x[0]
-    )
-    return upcoming
+    today = datetime.date.today()
+    open_tasks = [t for t in tasks.values()
+                  if not t["done"] and t["due_date"] >= today]
+    return sorted(open_tasks, key=lambda t: t["due_date"])
 
 
 """Entfernt alle erledigten Aufgaben."""
@@ -132,7 +130,7 @@ def get_task_count(tasks: dict) -> int:
 
 if __name__ == "__main__":
     my_tasks: dict = {}
-    today = datetime.date.today()
+    today: datetime.date = datetime.date.today()
     in_days = lambda n: today + datetime.timedelta(days=n)
 
     add_task(my_tasks, "Projekt abschließen", in_days(4), 1, task_id="hello")
@@ -145,10 +143,12 @@ if __name__ == "__main__":
     process_tasks(my_tasks)
     show_tasks(my_tasks)
 
-    print(my_tasks)
+    print("Offene Aufgaben nach Datum sortiert:")
+    for t in upcoming_tasks(my_tasks):
+        print(f"  {t['due_date']:%d-%m-%Y} {t['name']}")
 
     """
-    print("Offene Aufgaben nach Datum sortiert:", upcoming_tasks())
+    
     cleanup()
     print("Gesamtzahl der Aufgaben:", get_task_count())
     """

@@ -23,6 +23,7 @@ Aufgabe 2
 4. globale Variabelen entfernen
 5. calculate_task_average entfernen? Division durch Zero entfernen! Summe mit Strings?
 6. Ordentliche Funktionsbeschreibung
+7. Stringvergleich raus nehmen
 '''
 
 import datetime
@@ -32,7 +33,9 @@ tasks = None
 backup_tasks = {}
 
 
-def add_task(name, due_date, priority=3, task_id=None):
+"""Legt eine Aufgabe an und gibt deren ID zurück."""
+def add_task(name: str, due_date: str, priority: int = 3,
+             task_id: int | str | None = None) -> int | str:
     global tasks, backup_tasks
     if tasks is None:
         tasks = {}
@@ -47,7 +50,8 @@ def add_task(name, due_date, priority=3, task_id=None):
     return task_id
 
 
-def remove_task(task_id):
+"""Löscht die Aufgabe. True, wenn sie existierte, sonst False."""
+def remove_task(task_id: int | str) -> bool:
     global tasks
     if task_id in tasks:
         del tasks[task_id]
@@ -55,7 +59,8 @@ def remove_task(task_id):
     return False
 
 
-def mark_done(task_name):
+"""Markiert alle Aufgaben mit diesem Namen als erledigt."""
+def mark_done(task_name: str) -> str:
     global tasks
     for task_id, task in tasks.items():
         if task[0] == task_name:
@@ -63,27 +68,31 @@ def mark_done(task_name):
     return "Erledigt"
 
 
-def show_tasks():
+"""Gibt alle Aufgaben auf der Konsole aus."""
+def show_tasks() -> None:
     global tasks
     for task_id, task in tasks.items():
         print(
             f"{task_id}: {task[0]} ({task[2]}) - bis {task[1]} - {'Erledigt' if task[3] else 'Offen'}")
 
 
-def process_tasks():
+"""Schaltet den Status einer zufälligen Aufgabe um."""
+def process_tasks() -> bool:
     rand_id = random.choice(list(tasks.keys()))
     tasks[rand_id][3] = not tasks[rand_id][3]
     return False
     # TODO
 
 
-def calculate_task_average():
+"""Durchschnitt der Task-IDs."""
+def calculate_task_average() -> float:
     total = sum(tasks.keys())
     avg = total / len(tasks) if tasks else 0
     return avg
 
 
-def upcoming_tasks():
+"""Aufgaben mit Fälligkeitsdatum ab heute."""
+def upcoming_tasks() -> list:
     today = datetime.datetime.now().strftime("%d-%m-%Y")
     upcoming = sorted(
         [task for task in tasks.values() if task[1] >= today],
@@ -92,7 +101,8 @@ def upcoming_tasks():
     return upcoming
 
 
-def cleanup():
+"""Entfernt alle erledigten Aufgaben."""
+def cleanup() -> None:
     global tasks
     temp = {}
     for task_id, task in tasks.items():
@@ -104,7 +114,8 @@ def cleanup():
     tasks.update(temp)
 
 
-def get_task_count():
+"""Anzahl aller gespeicherten Aufgaben."""
+def get_task_count() -> int:
     return sum(1 for _ in tasks) if tasks else 0
 
 

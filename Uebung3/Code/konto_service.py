@@ -2,7 +2,7 @@
 
 from decimal import Decimal
 from typing import List, Dict
-from interfaces import KontoServiceInterface, KontoInterface
+from .interfaces import KontoServiceInterface, KontoInterface
 
 
 # TODO: Team B - Später ersetzt ihr diesen Import durch Team A's Implementation:

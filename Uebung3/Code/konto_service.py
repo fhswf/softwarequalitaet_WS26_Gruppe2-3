@@ -75,14 +75,21 @@ class KontoService(KontoServiceInterface):
         pass
 
     def konto_erstellen(self, saldo: Decimal = Decimal('0.00')) -> int:
-        # TODO: Team B - Implementierung
-        # Tipp: Nutzen Sie self._create_konto() für Konto-Erstellung!
-        # Beispiel:
-        # konto_id = self.get_max_konto_id() + 1
-        # konto = self._create_konto(konto_id, saldo)
-        # self._konten.append(konto)
-        # return konto_id
-        pass
+        """Legt ein Konto mit Anfangssaldo an und gibt dessen ID zurück.
+        ID wird automatisch ermittelt (max + 1)
+        ValueError bei falschen Typ oder negativem Saldo
+        """
+
+        if not isinstance(saldo, Decimal):
+            raise ValueError("Saldo muss vom Typ Decimal sein")
+        if saldo < 0:
+            raise ValueError("Anfangssaldo darf nicht negativ sein")
+
+        konto_id = self.get_max_konto_id() + 1
+        new_konto = self._create_konto(konto_id, saldo)
+
+        self._konten.append(new_konto)
+        return konto_id
 
     def ueberweisen(self, von_konto_id: int, zu_konto_id: int, betrag: Decimal) -> None:
         # TODO: Implementierung
@@ -93,8 +100,9 @@ class KontoService(KontoServiceInterface):
         pass
 
     def get_max_konto_id(self) -> int:
-        # TODO: Implementierung
-        pass
+        """Gibt die größte vergebene Konto-ID zurück, 0 wenn es keine Konten gibt."""
+        konten_ids = (k.konto_id for k in self._konten)
+        return max(konten_ids, default=0)
 
     def gesamtsaldo_berechnen(self) -> Decimal:
         # TODO: Implementierung

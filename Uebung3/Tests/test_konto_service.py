@@ -39,20 +39,12 @@ class TestKontoServiceErstellung:
     """
 
     def test_placeholder_service_erstellung(self):
-        """
-        Placeholder-Test - ersetzen Sie diesen durch echte Tests!
-
-        Beispiele für Tests:
-        - Service ohne Parameter erstellen
-        - Service mit initialen Konten erstellen
-        - Service-Zustand nach Erstellung prüfen
-        """
-        # TODO: Team B - Ersetzen Sie diesen Placeholder durch echte Tests
-        assert True, "Placeholder - bitte durch echte Tests ersetzen!"
-
-        # Beispiel-Code (entkommentiert nach Implementierung):
-        # service = KontoService()
-        # assert len(service.konten_auflisten()) == 0
+        def test_service_startet_leer(self):
+            # Arrange / Act
+            service = KontoService()
+            # Assert
+            assert service.konten_auflisten() == []
+            assert service.get_max_konto_id() == 0
 
 
 class TestKontoVerwaltung:

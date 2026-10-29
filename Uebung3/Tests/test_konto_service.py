@@ -31,6 +31,12 @@ from ..Code.konto_service import KontoService
 def service():
     return KontoService()
 
+@pytest.fixture
+def service_mit_konten(service):
+    a = service.konto_erstellen(Decimal("100.00"))
+    b = service.konto_erstellen(Decimal("50.00"))
+    return service, a, b
+
 
 class TestKontoServiceErstellung:
     """
@@ -97,39 +103,33 @@ class TestKontoVerwaltung:
 
 
 class TestTransaktionen:
-    """
-    Tests für Transaktions-Funktionen
-    TODO: Team B - Testet alle Geldtransaktionen über den Service
-    """
+    @pytest.mark.parametrize("betrag", [Decimal("0"), Decimal("-5.00")])
+    def test_ueberweisen_ungueltiger_betrag(self, service_mit_konten, betrag):
+        # Arrange
+        service, a, b = service_mit_konten
+        # Act / Assert
+        with pytest.raises(ValueError):
+            service.ueberweisen(a, b, betrag)
 
-    def test_placeholder_einzahlen(self):
-        """TODO: Team B - Tests für einzahlen()"""
-        # Beispiel-Tests:
-        # - Einzahlung auf existierendes Konto
-        # - Saldo wird korrekt erhöht
-        # - Einzahlung auf nicht-existierendes Konto → Exception?
-        # - Ungültiger Betrag → Exception?
-        assert True, "TODO: Tests für einzahlen implementieren"
+    def test_ueberweisen_falscher_typ(self, service_mit_konten):
+        service, a, b = service_mit_konten
+        with pytest.raises(ValueError):
+            service.ueberweisen(a, b, 10)
 
-    def test_placeholder_auszahlen(self):
-        """TODO: Team B - Tests für auszahlen()"""
-        # Beispiel-Tests:
-        # - Auszahlung bei ausreichendem Saldo
-        # - Saldo wird korrekt reduziert
-        # - Auszahlung bei unzureichendem Saldo → Exception?
-        # - Auszahlung von nicht-existierendem Konto → Exception?
-        assert True, "TODO: Tests für auszahlen implementieren"
+    def test_ueberweisen_unbekanntes_quellkonto(self, service_mit_konten):
+        service, _, b = service_mit_konten
+        with pytest.raises(ValueError):
+            service.ueberweisen(99, b, Decimal("1.00"))
 
-    def test_placeholder_ueberweisen(self):
-        """TODO: Team B - Tests für ueberweisen()"""
-        # Beispiel-Tests:
-        # - Überweisung zwischen existierenden Konten
-        # - Sender-Saldo wird reduziert
-        # - Empfänger-Saldo wird erhöht
-        # - Überweisung bei unzureichendem Saldo → Exception?
-        # - Überweisung an nicht-existierendes Konto → Exception?
-        # - Überweisung von nicht-existierendem Konto → Exception?
-        assert True, "TODO: Tests für ueberweisen implementieren"
+    def test_ueberweisen_gleiches_konto(self, service_mit_konten):
+        service, a, _ = service_mit_konten
+        with pytest.raises(ValueError):
+            service.ueberweisen(a, a, Decimal("1.00"))
+
+    def test_einziehen_ungueltiger_betrag(self, service_mit_konten):
+        service, a, b = service_mit_konten
+        with pytest.raises(ValueError):
+            service.einziehen(b, a, Decimal("0"))
 
 
 class TestSaldoFunktionen:

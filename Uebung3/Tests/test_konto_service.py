@@ -1,3 +1,5 @@
+# BNFT, TMMH
+
 """
 Test-Template für die KontoService-Klasse (Test-After Approach)
 ===============================================================
@@ -21,8 +23,14 @@ import pytest
 from decimal import Decimal
 
 # TODO: Team B - Entkommentieren Sie nach Ihrer Implementierung:
-# from ..Code.konto_service import KontoService
+from ..Code.konto_service import KontoService
 # from ..Code.konto import Konto
+
+
+@pytest.fixture
+def service():
+    return KontoService()
+
 
 class TestKontoServiceErstellung:
     """
@@ -53,23 +61,48 @@ class TestKontoVerwaltung:
     TODO: Team B - Testet alle Konto-Verwaltungs-Funktionen
     """
 
-    def test_placeholder_konto_erstellen(self):
-        """TODO: Team B - Tests für konto_erstellen()"""
-        # Beispiel-Tests:
-        # - Konto mit gültigem Saldo erstellen
-        # - Konto-ID wird automatisch vergeben
-        # - Konto wird zur internen Liste hinzugefügt
-        # - Rückgabe der Konto-ID
-        # - Erstellen mit ungültigem Saldo → Exception?
-        assert True, "TODO: Tests für konto_erstellen implementieren"
+    def test_erstes_konto_bekommt_id_1(self, service):
+        # Act
+        konto_id = service.konto_erstellen(Decimal("10.00"))
+        # Assert
+        assert konto_id == 1
 
-    def test_placeholder_konten_auflisten(self):
-        """TODO: Team B - Tests für konten_auflisten()"""
-        # Beispiel-Tests:
-        # - Leere Liste bei Service-Start
-        # - Liste nach Konto-Erstellung
-        # - Korrekte Anzahl und Inhalte
-        assert True, "TODO: Tests für konten_auflisten implementieren"
+    def test_zweites_konto_bekommt_id_2(self, service):
+        # Arrange
+        service.konto_erstellen()
+        # Act
+        konto_id = service.konto_erstellen()
+        # Assert
+        assert konto_id == 2
+
+    def test_konto_erstellen_negativer_saldo(self, service):
+        # Act / Assert
+        with pytest.raises(ValueError):
+            service.konto_erstellen(Decimal("-1.00"))
+        assert service.konten_auflisten() == []
+
+    def test_konto_erstellen_falscher_typ(self, service):
+        # Act / Assert
+        with pytest.raises(ValueError):
+            service.konto_erstellen(10)
+
+    def test_konten_auflisten_anzahl(self, service):
+        # Arrange
+        service.konto_erstellen()
+        service.konto_erstellen()
+        # Act
+        konten = service.konten_auflisten()
+        # Assert
+        assert len(konten) == 2
+
+    def test_konten_auflisten_enthaelt_id_und_saldo(self, service):
+        # Arrange
+        service.konto_erstellen(Decimal("10.00"))
+        # Act
+        eintrag = service.konten_auflisten()[0]
+        # Assert
+        assert set(eintrag.keys()) == {"konto_id", "saldo"}
+
 
 class TestTransaktionen:
     """
@@ -113,14 +146,9 @@ class TestSaldoFunktionen:
     TODO: Team B - Testet Saldo-Abfragen und -Berechnungen
     """
 
-    def test_placeholder_gesamtsaldo(self):
-        """TODO: Team B - Tests für gesamtsaldo()"""
-        # Beispiel-Tests:
-        # - Gesamtsaldo bei leerer Kontenliste (0)
-        # - Gesamtsaldo mit einem Konto
-        # - Gesamtsaldo mit mehreren Konten
-        # - Korrekte Summe aller Salden
-        assert True, "TODO: Tests für gesamtsaldo implementieren"
+    def test_gesamtsaldo_leer(self, service):
+        # Act / Assert
+        assert service.gesamtsaldo_berechnen() == Decimal("0.00")
 
 
 class TestUtilityFunktionen:
@@ -129,13 +157,16 @@ class TestUtilityFunktionen:
     TODO: Team B - Testet ID-Verwaltung und Export-Funktionen
     """
 
-    def test_placeholder_get_max_konto_id(self):
-        """TODO: Team B - Tests für get_max_konto_id()"""
-        # Beispiel-Tests:
-        # - Erste ID ist 1
-        # - IDs werden fortlaufend vergeben
-        # - Keine doppelten IDs
-        assert True, "TODO: Tests für get_max_konto_id implementieren"
+    def test_max_id_leer(self, service):
+        # Act / Assert
+        assert service.get_max_konto_id() == 0
+
+    def test_max_id_nach_erstellung(self, service):
+        # Arrange
+        service.konto_erstellen()
+        # Act / Assert
+        assert service.get_max_konto_id() == 1
+
 
 class TestKontoServiceIntegration:
     """

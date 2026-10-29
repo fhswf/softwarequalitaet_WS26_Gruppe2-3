@@ -92,12 +92,34 @@ class KontoService(KontoServiceInterface):
         return konto_id
 
     def ueberweisen(self, von_konto_id: int, zu_konto_id: int, betrag: Decimal) -> None:
-        # TODO: Implementierung
-        pass
+        """Überweist einen Betrag von einem Konto auf ein anderes.
+
+        Wirft ValueError bei ungültigem Betrag, gleichen oder unbekannten Konten
+        und RuntimeError bei Überziehung des Quellkontos.
+        """
+        self._pruefe_betrag(betrag)
+        if von_konto_id == zu_konto_id:
+            raise ValueError("Quell- und Zielkonto müssen verschieden sein")
+
+        # Beide Konten vor der Buchung prüfen, damit nichts halb gebucht wird
+        von_konto = self._finde_konto(von_konto_id)
+        zu_konto = self._finde_konto(zu_konto_id)
+
+        # RuntimeError bei Überziehung kommt von hier
+        von_konto.auszahlen(betrag)
+        try:
+            zu_konto.einzahlen(betrag)
+        except Exception:
+            # Rollback: Abbuchung rückgängig machen
+            von_konto.einzahlen(betrag)
+            raise
 
     def einziehen(self, von_konto_id: int, zu_konto_id: int, betrag: Decimal) -> None:
-        # TODO: Implementierung
-        pass
+        """Zieht einen Betrag von einem Konto ein (Geld fließt von 'von' nach 'zu').
+
+        Fachlich identisch zu ueberweisen, nur aus Sicht des einziehenden Kontos.
+        """
+        self.ueberweisen(von_konto_id, zu_konto_id, betrag)
 
     def get_max_konto_id(self) -> int:
         """Gibt die größte vergebene Konto-ID zurück, 0 wenn es keine Konten gibt."""
@@ -108,3 +130,19 @@ class KontoService(KontoServiceInterface):
         """Summe aller Kontosalden (Decimal('0.00') bei leerem Service)."""
         gesamtsaldo = (k.saldo for k in self._konten)
         return sum(gesamtsaldo, Decimal('0.00'))
+
+    # ----------- Helper methods ---------------
+    def _finde_konto(self, konto_id: int) -> KontoInterface:
+        """Sucht ein Konto anhand der ID. Wirft ValueError, wenn es nicht existiert."""
+        for konto in self._konten:
+            if konto.konto_id == konto_id:
+                return konto
+        raise ValueError(f"Konto mit ID {konto_id} existiert nicht")
+
+    @staticmethod
+    def _pruefe_betrag(betrag: Decimal) -> None:
+        """Prüft Typ (Decimal) und Wert (> 0). Wirft ValueError bei ungültigem Betrag."""
+        if not isinstance(betrag, Decimal):
+            raise ValueError("Betrag muss vom Typ Decimal sein")
+        if betrag <= 0:
+            raise ValueError("Betrag muss größer als 0 sein")

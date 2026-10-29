@@ -71,8 +71,8 @@ class KontoService(KontoServiceInterface):
         # return Konto(konto_id, saldo)
 
     def konten_auflisten(self) -> List[Dict]:
-        # TODO: Implementierung
-        pass
+        """Gibt alle Konten als Liste von Dicts (konto_id, saldo) zurück"""
+        return [{"konto_id": k.konto_id, "saldo": k.saldo} for k in self._konten]
 
     def konto_erstellen(self, saldo: Decimal = Decimal('0.00')) -> int:
         """Legt ein Konto mit Anfangssaldo an und gibt dessen ID zurück.
@@ -105,5 +105,6 @@ class KontoService(KontoServiceInterface):
         return max(konten_ids, default=0)
 
     def gesamtsaldo_berechnen(self) -> Decimal:
-        # TODO: Implementierung
-        pass
+        """Summe aller Kontosalden (Decimal('0.00') bei leerem Service)."""
+        gesamtsaldo = (k.saldo for k in self._konten)
+        return sum(gesamtsaldo, Decimal('0.00'))

@@ -1,10 +1,8 @@
-"""
-TODO: Implementieren Sie die KontoService-Klasse basierend auf dem KontoServiceInterface
-"""
+# BNFT, TMMH
 
 from decimal import Decimal
 from typing import List, Dict
-from .interfaces import KontoServiceInterface, KontoInterface
+from interfaces import KontoServiceInterface, KontoInterface
 
 
 # TODO: Team B - Später ersetzt ihr diesen Import durch Team A's Implementation:
@@ -29,10 +27,10 @@ class KontoService(KontoServiceInterface):
     """
 
     def __init__(self):
-        # TODO: Team B - Implementierung
-        # Tipp: self._konten: List[KontoInterface] = []
-        pass
+        """Erzeugt einen Service ohne Konten."""
+        self._konten: List[KontoInterface] = []
 
+    # private Hilfsmethode
     def _create_konto(self, konto_id: int, saldo: Decimal) -> KontoInterface:
         """
         Factory-Methode für Konto-Erstellung - ermöglicht parallele Entwicklung!
@@ -48,7 +46,7 @@ class KontoService(KontoServiceInterface):
 
         # EXTREM EINFACHE DUMMY-IMPLEMENTATION für Team B:
         # Macht fast nichts, gibt nur konstante Werte zurück!
-        class DummyKonto:
+        class DummyKonto(KontoInterface):
             def __init__(self, konto_id: int, saldo: Decimal):
                 # Speichert die Werte, aber macht keine Validierung!
                 pass
@@ -73,18 +71,25 @@ class KontoService(KontoServiceInterface):
         # return Konto(konto_id, saldo)
 
     def konten_auflisten(self) -> List[Dict]:
-        # TODO: Implementierung
-        pass
+        """Gibt alle Konten als Liste von Dicts (konto_id, saldo) zurück"""
+        return [{"konto_id": k.konto_id, "saldo": k.saldo} for k in self._konten]
 
     def konto_erstellen(self, saldo: Decimal = Decimal('0.00')) -> int:
-        # TODO: Team B - Implementierung
-        # Tipp: Nutzen Sie self._create_konto() für Konto-Erstellung!
-        # Beispiel:
-        # konto_id = self.get_max_konto_id() + 1
-        # konto = self._create_konto(konto_id, saldo)
-        # self._konten.append(konto)
-        # return konto_id
-        pass
+        """Legt ein Konto mit Anfangssaldo an und gibt dessen ID zurück.
+        ID wird automatisch ermittelt (max + 1)
+        ValueError bei falschen Typ oder negativem Saldo
+        """
+
+        if not isinstance(saldo, Decimal):
+            raise ValueError("Saldo muss vom Typ Decimal sein")
+        if saldo < 0:
+            raise ValueError("Anfangssaldo darf nicht negativ sein")
+
+        konto_id = self.get_max_konto_id() + 1
+        new_konto = self._create_konto(konto_id, saldo)
+
+        self._konten.append(new_konto)
+        return konto_id
 
     def ueberweisen(self, von_konto_id: int, zu_konto_id: int, betrag: Decimal) -> None:
         # TODO: Implementierung
@@ -95,9 +100,11 @@ class KontoService(KontoServiceInterface):
         pass
 
     def get_max_konto_id(self) -> int:
-        # TODO: Implementierung
-        pass
+        """Gibt die größte vergebene Konto-ID zurück, 0 wenn es keine Konten gibt."""
+        konten_ids = (k.konto_id for k in self._konten)
+        return max(konten_ids, default=0)
 
     def gesamtsaldo_berechnen(self) -> Decimal:
-        # TODO: Implementierung
-        pass
+        """Summe aller Kontosalden (Decimal('0.00') bei leerem Service)."""
+        gesamtsaldo = (k.saldo for k in self._konten)
+        return sum(gesamtsaldo, Decimal('0.00'))

@@ -1,10 +1,8 @@
-"""
-TODO: Implementieren Sie die KontoService-Klasse basierend auf dem KontoServiceInterface
-"""
+# BNFT, TMMH
 
 from decimal import Decimal
 from typing import List, Dict
-from .interfaces import KontoServiceInterface, KontoInterface
+from interfaces import KontoServiceInterface, KontoInterface
 
 
 # TODO: Team B - Später ersetzt ihr diesen Import durch Team A's Implementation:
@@ -29,10 +27,10 @@ class KontoService(KontoServiceInterface):
     """
 
     def __init__(self):
-        # TODO: Team B - Implementierung
-        # Tipp: self._konten: List[KontoInterface] = []
-        pass
+        """Erzeugt einen Service ohne Konten."""
+        self._konten: List[KontoInterface] = []
 
+    # private Hilfsmethode
     def _create_konto(self, konto_id: int, saldo: Decimal) -> KontoInterface:
         """
         Factory-Methode für Konto-Erstellung - ermöglicht parallele Entwicklung!
@@ -48,7 +46,7 @@ class KontoService(KontoServiceInterface):
 
         # EXTREM EINFACHE DUMMY-IMPLEMENTATION für Team B:
         # Macht fast nichts, gibt nur konstante Werte zurück!
-        class DummyKonto:
+        class DummyKonto(KontoInterface):
             def __init__(self, konto_id: int, saldo: Decimal):
                 # Speichert die Werte, aber macht keine Validierung!
                 pass

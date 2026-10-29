@@ -6,7 +6,7 @@ from .interfaces import KontoServiceInterface, KontoInterface
 
 
 # TODO: Team B - Später ersetzt ihr diesen Import durch Team A's Implementation:
-# from .konto import Konto
+from .konto import Konto
 
 
 class KontoService(KontoServiceInterface):
@@ -32,43 +32,7 @@ class KontoService(KontoServiceInterface):
 
     # private Hilfsmethode
     def _create_konto(self, konto_id: int, saldo: Decimal) -> KontoInterface:
-        """
-        Factory-Methode für Konto-Erstellung - ermöglicht parallele Entwicklung!
-
-        TODO: Team B - STARTEN SIE HIER! Diese Methode gibt Ihnen EXTREM EINFACHE Dummy-Objekte.
-
-        JETZT: Verwenden Sie diese Dummy-Implementation für Ihre Service-Entwicklung
-        SPÄTER: Ersetzen Sie durch `return Konto(konto_id, saldo)` wenn Team A fertig ist
-
-        WICHTIG: Diese Dummy-Implementation macht fast NICHTS - das ist Absicht!
-        Bei der Integration werden Sie Probleme entdecken, die Sie dann gemeinsam lösen.
-        """
-
-        # EXTREM EINFACHE DUMMY-IMPLEMENTATION für Team B:
-        # Macht fast nichts, gibt nur konstante Werte zurück!
-        class DummyKonto(KontoInterface):
-            def __init__(self, konto_id: int, saldo: Decimal):
-                # Speichert die Werte, aber macht keine Validierung!
-                pass
-
-            @property
-            def konto_id(self) -> int:
-                return 1  # ← Immer konstant 1!
-
-            @property
-            def saldo(self) -> Decimal:
-                return Decimal("100.00")  # ← Immer konstant 100!
-
-            def einzahlen(self, betrag: Decimal) -> None:
-                pass  # ← Macht nichts!
-
-            def auszahlen(self, betrag: Decimal) -> None:
-                pass  # ← Macht nichts, wirft keine Fehler!
-
-        return DummyKonto(konto_id, saldo)
-
-        # TODO: Team B - Später ersetzen Sie die obige Dummy-Implementation durch:
-        # return Konto(konto_id, saldo)
+        return Konto(konto_id, saldo)
 
     def konten_auflisten(self) -> List[Dict]:
         """Gibt alle Konten als Liste von Dicts (konto_id, saldo) zurück"""

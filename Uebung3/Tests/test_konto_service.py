@@ -24,7 +24,7 @@ from decimal import Decimal
 
 # TODO: Team B - Entkommentieren Sie nach Ihrer Implementierung:
 from ..Code.konto_service import KontoService
-# from ..Code.konto import Konto
+from ..Code.konto import Konto
 
 
 @pytest.fixture
@@ -244,3 +244,11 @@ class TestKontoServiceIntegration:
         assert saldo_von(service, b) == Decimal("70.00")
         assert saldo_von(service, c) == Decimal("15.00")
         assert service.gesamtsaldo_berechnen() == Decimal("125.00")
+
+    def test_service_erzeugt_echte_konten(self, service):
+        # Arrange
+        service.konto_erstellen(Decimal("10.00"))
+        # Act
+        konto = service._konten[0]
+        # Assert
+        assert isinstance(konto, Konto)

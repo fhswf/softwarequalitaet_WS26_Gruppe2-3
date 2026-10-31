@@ -91,7 +91,7 @@ Implementation 1: [Minimale Lösung] - Zeit: 3 Min
 3. Zahl 5 übergeben -> erwartete Ausgabe "Buzz", weil 5 durch 5 teilbar ist
 4. Zahl 15 übergeben -> erwartete Ausgabe "FizzBuzz", weil 15 durch 3 und 5 teilbar ist
 
-Test 2: Edgecase - Autor: Jonas Oberste-Berghaus - 31.10.2026 13:15 Uhr Zeit: 5 Minuten  
+Test 2: Edgecase - Autor: Jonas Oberste-Berghaus - 31.10.2026 13:15 Uhr Zeit: 10 Minuten  
 - Normale Zahlen (1, 2): Ausgabe ist die Zahl als String ("1", "2").
 - Vielfache von 3 (3, 6, 9): Ausgabe ist "Fizz".
 - Vielfache von 5 (5, 10, 20): Ausgabe ist "Buzz".
@@ -100,12 +100,19 @@ Test 2: Edgecase - Autor: Jonas Oberste-Berghaus - 31.10.2026 13:15 Uhr Zeit: 5 
 - Große Zahl (1_000_000_005): Ausgabe ist "FizzBuzz".
 - Zahl als string ("3"): TypeError 
 
-Refactoring: [Was geändert] - Zeit: [Zeit]
 
-[Weiter dokumentieren...]
+Refactoring: redundante If-Abfrage entfernt - Zeit: 3 Minuten
 
-Erkenntnisse:
-- Was war überraschend?
-- Wo musstet ihr refaktorieren?
-- Welche Tests brachten neue Herausforderungen?
+
+Was war überraschend?
+- Es lassen sich mehrere Testfälle mit @pytest.mark.parametrize abdecken
+- Durch die Reihenfolge der Bedingungen können Fehler entstehen, bsp: wenn zuerst auf Teilbarkeit durch 3 statt durch 15 geprüft wird
+
+Wo musstet ihr refaktorieren?
+- Anfangs wurde die Teilbarkeit durch 15, 3 und 5 einzeln geprüft
+- Beim Refactoring wurde die separate Prüfung auf 15 entfernt. Stattdessen werden "Fizz" und "Buzz" unabhängig voneinander an einen Ergebnisstring angehängt
+
+Welche Tests brachten neue Herausforderungen?
+- Zahlen, die sowohl durch 3 als auch durch 5 teilbar sind, beispielsweise 15 und 30
+- Randfälle wie 0, da dieser durch 3 und 5 teilbar ist und somit "FizzBuzz" zurückgibt
 """

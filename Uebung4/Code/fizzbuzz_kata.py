@@ -17,10 +17,11 @@ FizzBuzz Regeln:
 
 
 def fizzbuzz(n: int) -> str:
-    if n % 15 == 0:
-        return "FizzBuzz"
+    result = ""
+
     if n % 3 == 0:
-        return "Fizz"
+        result += "Fizz"
     if n % 5 == 0:
-        return "Buzz"
-    return str(n)
+        result += "Buzz"
+
+    return result or str(n)

@@ -18,7 +18,7 @@ Autorschaft dokumentieren: Wer hat welchen TDD-Schritt gemacht?
 import pytest
 
 # TODO: Team A - Import nach erster Implementierung:
-# from ..Code.fizzbuzz_kata import fizzbuzz
+from ..Code.fizzbuzz_kata import fizzbuzz
 
 
 class TestFizzBuzzTDD:
@@ -33,48 +33,73 @@ class TestFizzBuzzTDD:
     """
 
     def test_placeholder_start_here(self):
-        """
-        TODO: Team A - Ersetzt diesen Placeholder durch euren ersten TDD-Test!
+        # TDD-Autor: Torben Krüger 31.10.2026 13:10 Uhr
 
-        Ideen für den ersten Test:
-        - Was ist das einfachste Verhalten?
-        - fizzbuzz(1) sollte was zurückgeben?
-
-        TDD-Autor: [Name und Zeit]
-        """
-        # TODO: Euer erster TDD-Test hier
-        assert True, "Placeholder - startet hier mit TDD!"
-
-        # Beispiel-Idee (entfernt nach eigenem Test):
-        # assert fizzbuzz(1) == "1"
-
+        assert fizzbuzz(1) == "1"
+        assert fizzbuzz(3) == "Fizz"
+        assert fizzbuzz(5) == "Buzz"
+        assert fizzbuzz(15) == "FizzBuzz"
+        
 
 class TestFizzBuzzErweitert:
-    """
-    TODO: Team A - Erweiterte Tests, wenn Basis funktioniert
-    """
+    # TDD-Autor: Torben Krüger 31.10.2026 13:15 Uhr
+    @pytest.mark.parametrize(
+        ("number", "expected"),
+        [
+            (1, "1"),
+            (2, "2"),
+            (3, "Fizz"),
+            (6, "Fizz"),
+            (9, "Fizz"),
+            (5, "Buzz"),
+            (10, "Buzz"),
+            (20, "Buzz"),
+            (15, "FizzBuzz"),
+            (30, "FizzBuzz"),
+            (45, "FizzBuzz"),
+        ],
+    )
+    def test_multiple_numbers(self, number, expected):
+        assert fizzbuzz(number) == expected
 
-    def test_placeholder_extended_tests(self):
-        """
-        TODO: Team A - Entwickelt weitere Tests für FizzBuzz
+    @pytest.mark.parametrize(
+        ("number", "expected"),
+        [
+            (0, "FizzBuzz"),
+            (-3, "Fizz"),
+            (-5, "Buzz"),
+            (-15, "FizzBuzz"),
+        ],
+    )
+    def test_edge_cases(self, number, expected):
+        assert fizzbuzz(number) == expected
 
-        Ideen:
-        - Mehrere Zahlen gleichzeitig testen
-        - Parametrisierte Tests (@pytest.mark.parametrize)
-        - Edge Cases (negative Zahlen, 0, große Zahlen)
-        """
-        # TODO: Erweiterte Tests hier
-        assert True, "TODO: Erweiterte FizzBuzz-Tests implementieren"
+    def test_large_number(self):
+        assert fizzbuzz(1_000_000_005) == "FizzBuzz"
 
+    def test_string_input_raises_type_error(self):
+        with pytest.raises(TypeError):
+            fizzbuzz("3")
 
-# TODO: Team A - Optional: TDD-Protokoll
 """
 TDD-Fortschritt dokumentieren:
 
-Test 1: [Was getestet] - Autor: [Name] - Zeit: [Zeit]
-Implementation 1: [Minimale Lösung] - Zeit: [Zeit]
+Test 1: Fizzbuzz Happy path - Autor: Torben Krüger - 31.10.2026 13:10 Uhr Zeit: 5 Minuten
+Implementation 1: [Minimale Lösung] - Zeit: 3 Min
+1. Zahl 1 übergeben -> erawrtete Ausgabe "1", weil die Zahl nicht durch 3 oder 5 teilbar ist
+2. Zahl 3 übergebne -> erwartete Ausgabe "Fizz", weil 3 durch 3 teilbar ist
+3. Zahl 5 übergeben -> erwartete Ausgabe "Buzz", weil 5 durch 5 teilbar ist
+4. Zahl 15 übergeben -> erwartete Ausgabe "FizzBuzz", weil 15 durch 3 und 5 teilbar ist
 
-Test 2: [Was getestet] - Autor: [Name] - Zeit: [Zeit]  
+Test 2: Edgecase - Autor: Jonas Oberste-Berghaus - 31.10.2026 13:15 Uhr Zeit: 5 Minuten  
+- Normale Zahlen (1, 2): Ausgabe ist die Zahl als String ("1", "2").
+- Vielfache von 3 (3, 6, 9): Ausgabe ist "Fizz".
+- Vielfache von 5 (5, 10, 20): Ausgabe ist "Buzz".
+- Vielfache von 3 und 5 (15, 30, 45): Ausgabe ist "FizzBuzz".
+- Randfälle (0, -3, -5, -15): Ausgabe ist "FizzBuzz", "Fizz", "Buzz", "FizzBuzz".
+- Große Zahl (1_000_000_005): Ausgabe ist "FizzBuzz".
+- Zahl als string ("3"): TypeError 
+
 Refactoring: [Was geändert] - Zeit: [Zeit]
 
 [Weiter dokumentieren...]

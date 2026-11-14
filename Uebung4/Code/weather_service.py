@@ -45,4 +45,21 @@ def get_weather_category(city: str) -> str:
     # response.raise_for_status()
     # data = response.json()
     # temperature = data.get("temperature")
-    pass
+
+    # Zyklus 2: GREEN von JSOS um 10:20 Uhr - Implementierung hinzugefügt
+    url = f"https://api.weather.com/current?city={city}"
+    response = requests.get(url, timeout=5)
+    response.raise_for_status()
+    temperature = response.json().get("temperature")
+
+    if temperature < 0:
+        return "frostgefahr"
+    if temperature <= 10:
+        return "kalt"
+    if temperature <= 15:
+        return "kühl"
+    if temperature <= 24:
+        return "angenehm"
+    if temperature <= 30:
+        return "warm"
+    return "heiß"

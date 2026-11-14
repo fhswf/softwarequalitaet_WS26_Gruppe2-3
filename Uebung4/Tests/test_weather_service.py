@@ -51,5 +51,31 @@ class TestWeatherService:
                 "https://api.weather.com/current?city=Berlin",
                 timeout=5,
             )
-    
+
     # TODO: Team A - Weitere Tests für alle Temperaturkategorien hinzufügen!
+
+
+    @pytest.mark.parametrize(
+        ("temperature", "expected_category"),
+        [
+            (-5, "frostgefahr"),
+            (5, "kalt"),
+            (13, "kühl"),
+            (20, "angenehm"),
+            (28, "warm"),
+            (35, "heiß"),
+        ],
+    )
+    def test_all_temperature_categories(self, temperature, expected_category):
+        with patch("requests.get") as mock_get:
+            mock_get.return_value.json.return_value = {
+                "temperature": temperature
+            }
+
+            result = get_weather_category("Berlin")
+
+            assert result == expected_category
+            mock_get.assert_called_once_with(
+                "https://api.weather.com/current?city=Berlin",
+                timeout=5,
+            )
